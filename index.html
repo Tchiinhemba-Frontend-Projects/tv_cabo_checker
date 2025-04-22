@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verificar Disponibilidade - TV Cabo</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+  <style>
+    #map { height: 500px; width: 100%; margin-bottom: 10px; }
+    button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <h1>Verifique se o serviço da TV Cabo está disponível na sua área</h1>
+  <div id="map"></div>
+  <button onclick="checkAvailability()">Testar Disponibilidade</button>
+
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+  <script>
+    // Inicializa o mapa
+    const map = L.map('map').setView([-8.8399876, 13.2894368], 12); // Luanda
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    // Aqui vai o trecho do fetch
+    let coberturaGeoJSON;
+    fetch('./data/geoData.json')
+      .then(response => response.json())
+      .then(data => {
+        coberturaGeoJSON = data;
+
+        L.geoJSON(coberturaGeoJSON, {
+          style: { color: 'blue', fillColor: 'blue', fillOpacity: 0.2 }
+        }).addTo(map);
+      });
+
+    // Botão: checar disponibilidade
+    function checkAvailability() {
+      if (!navigator.geolocation) {
+        alert("Geolocalização não é suportada.");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(pos => {
+        if (!coberturaGeoJSON) {
+          alert("Os dados de cobertura ainda não carregaram.");
+          return;
+        }
+
+        const userPoint = turf.point([pos.coords.longitude, pos.coords.latitude]);
+
+        const isInside = coberturaGeoJSON.features.some(feature => {
+          return turf.booleanPointInPolygon(userPoint, feature);
+        });
+
+        alert(isInside
+          ? "✅ Serviço disponível na sua região!"
+          : "❌ Serviço ainda não disponível na sua região.");
+      }, err => {
+        alert("Erro ao obter localização.");
+        console.error(err);
+      });
+    }
+  </script>
+
+</body>
+</html>
