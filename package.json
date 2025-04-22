@@ -1,0 +1,20 @@
+{
+  "name": "tv_cabo_checker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tchiinhemba-Frontend-Projects/tv_cabo_checker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tchiinhemba-Frontend-Projects/tv_cabo_checker/issues"
+  },
+  "homepage": "https://github.com/Tchiinhemba-Frontend-Projects/tv_cabo_checker#readme"
+}
